@@ -39,8 +39,15 @@ better maths, better geometry are all welcome and expected.
 10. **A cinematic is not a pass.** The state and assembly graph must confirm
     what happened. If the graph cannot prove it, it did not happen.
 
+    This is about the state being real, not about animation being banned.
+    Keyframes, tweens, animation mixers and instancing are all fine and
+    expected. What is not fine is a timeline being the *only* thing that
+    happened — a crate fading in on cue while nothing underneath knows a board
+    was ever cut.
+
 ## Reading order
 
+- `V1-TEST.md` — the definition of done. 82 items, each a yes or no.
 - `VISION.md` — where this eventually goes. Read it before choosing
   architecture. **Build none of it yet.**
 - `knowledge/README.md` — the specification layer and what belongs in it.

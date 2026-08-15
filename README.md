@@ -24,10 +24,13 @@ rather than by watching it look right.
 
 1. **[AGENTS.md](AGENTS.md)** — the invariants. Short. These are the things that
    must not be simplified away.
-2. **[VISION.md](VISION.md)** — where this eventually goes: backward to the
+2. **[V1-TEST.md](V1-TEST.md)** — the definition of done: 82 checkable items,
+   each a yes or no, verified against the assembly graph rather than by watching
+   it look right.
+3. **[VISION.md](VISION.md)** — where this eventually goes: backward to the
    tree, forward to the shop shelf, and eventually across pages that behave like
    separate worlds. Read it before choosing architecture; build none of it yet.
-3. **[knowledge/README.md](knowledge/README.md)** — the specification layer that
+4. **[knowledge/README.md](knowledge/README.md)** — the specification layer that
    the geometry is generated from, and the first thing to be filled in.
 
 ## Built for phones as much as desktops
