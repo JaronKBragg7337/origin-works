@@ -404,6 +404,21 @@ section('Fits');
     check(`forklift clears ${b.id} door`, f.ok, `width ${r(f.widthClearanceMm, 0)} mm, height ${r(f.heightClearanceMm, 0)} mm`);
   }
 
+  const clashes = K.siteSpec.siteClashes();
+  check('the road does not pass through any building or the yard',
+    clashes.filter((c) => c.kind === 'road-through-building').length === 0,
+    clashes.filter((c) => c.kind === 'road-through-building')
+      .map((c) => `${c.id} seg ${c.segment} by ${c.overlapXMm}×${c.overlapZMm} mm`).join('; ') || 'clear');
+  check('no two buildings share ground',
+    clashes.filter((c) => c.kind === 'buildings-overlap').length === 0,
+    clashes.filter((c) => c.kind === 'buildings-overlap')
+      .map((c) => `${c.a}/${c.b}`).join('; ') || 'clear');
+  for (const b of K.siteSpec.BUILDINGS) {
+    const e = K.siteSpec.buildingExtentMm(b);
+    note(`${b.id} ${b.spec ?? b.label}: world x ${e.minX} to ${e.maxX}, z ${e.minZ} to ${e.maxZ} ` +
+      `(declared ${b.footprintMm[0]}×${b.footprintMm[1]} mm at ${b.doorHeadingDeg}°)`);
+  }
+
   const turn = K.truckSpec.DRIVE.turningRadiusMm;
   check('road corner radius exceeds the truck turning radius',
     K.siteSpec.ROAD.minCornerRadiusMm > turn, `corner ${K.siteSpec.ROAD.minCornerRadiusMm} mm vs turn ${r(turn, 0)} mm`);

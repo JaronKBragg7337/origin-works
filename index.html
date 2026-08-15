@@ -2,25 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="A Three.js world where a wooden shipping crate is actually manufactured — measured, cut with the kerf accounted for, and nailed together with fasteners that really intersect both boards.">
 <title>Origin Works</title>
-<meta http-equiv="refresh" content="0; url=./spec/">
-<style>
-  :root{--bg:#f6f4f0;--ink:#1b1815;--dim:#6b635a;--accent:#8a4b1f}
-  @media (prefers-color-scheme:dark){:root{--bg:#14120f;--ink:#ece6dc;--dim:#a09587;--accent:#d8925a}}
-  body{margin:0;background:var(--bg);color:var(--ink);display:grid;place-items:center;min-height:100svh;
-    font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:24px;text-align:center}
-  h1{font-size:1.4rem;margin:0 0 8px}
-  p{color:var(--dim);margin:0 0 20px;max-width:38ch}
-  a{color:var(--accent);font-weight:600}
-</style>
+<link rel="stylesheet" href="./app.css">
 </head>
 <body>
-  <main>
+<canvas id="c"></canvas>
+<div id="ui"></div>
+<div id="boot">
+  <div>
     <h1>Origin Works</h1>
-    <p>Nothing is built yet. The specification layer is written and verified; geometry comes after.</p>
-    <p><a href="./spec/">Open the spec review &rarr;</a></p>
-  </main>
+    <p>Building the world from the specification…</p>
+    <p style="margin-top:14px"><a href="./spec/" style="color:#d8925a">measurements</a></p>
+  </div>
+</div>
+<script type="module" src="./src/main.js"></script>
+<noscript><p style="color:#ece6dc;padding:24px">This needs JavaScript and WebGL.</p></noscript>
 </body>
 </html>

@@ -7,6 +7,13 @@
  * was taken from that source.** The links here are an original design built
  * around those numbers.
  *
+ * Transcription note: every revolute joint in S4 rotates about **its own
+ * frame's Z**, and the frame rotations below carry the orientation. An earlier
+ * version of this file wrote per-joint axes from memory as [0,1,0] for the lift
+ * joints, which made all six world axes vertical — an arm that could swing but
+ * never lift. The axes were then read from the source and corrected, and
+ * `tools/run-cycle.mjs` now fails if the axes stop spanning 3D.
+ *
  * V1-TEST D25-D32:
  *   25. base, joints, links, wrist, tool flange, end effector — all present
  *   26. each joint rotates about its own declared axis
@@ -37,13 +44,13 @@ export const CHAIN = Object.freeze([
     massKg: 3.761, source: 'S4',
   }),
   Object.freeze({
-    joint: 'shoulder_lift', kind: 'revolute', axis: [0, 1, 0],
+    joint: 'shoulder_lift', kind: 'revolute', axis: [0, 0, 1],
     link: 'upper_arm', originMm: [0, 0, 0], rpyDeg: [90, 0, 0],
     limitDeg: [-360, 360], maxVelocityDegPerS: 180, maxEffortNm: 150,
     massKg: 8.058, source: 'S4',
   }),
   Object.freeze({
-    joint: 'elbow', kind: 'revolute', axis: [0, 1, 0],
+    joint: 'elbow', kind: 'revolute', axis: [0, 0, 1],
     link: 'forearm', originMm: [-425.0, 0, 0], rpyDeg: [0, 0, 0],
     limitDeg: [-180, 180], maxVelocityDegPerS: 180, maxEffortNm: 150,
     massKg: 2.846, source: 'S4',
@@ -53,7 +60,7 @@ export const CHAIN = Object.freeze([
       'V1-TEST D27 is checked against it.',
   }),
   Object.freeze({
-    joint: 'wrist_1', kind: 'revolute', axis: [0, 1, 0],
+    joint: 'wrist_1', kind: 'revolute', axis: [0, 0, 1],
     link: 'wrist_1', originMm: [-392.2, 0, 133.3], rpyDeg: [0, 0, 0],
     limitDeg: [-360, 360], maxVelocityDegPerS: 180, maxEffortNm: 28,
     massKg: 1.37, source: 'S4',
@@ -65,7 +72,7 @@ export const CHAIN = Object.freeze([
     massKg: 1.3, source: 'S4',
   }),
   Object.freeze({
-    joint: 'wrist_3', kind: 'revolute', axis: [0, 1, 0],
+    joint: 'wrist_3', kind: 'revolute', axis: [0, 0, 1],
     link: 'wrist_3', originMm: [0, 99.6, 0], rpyDeg: [90, 180, 180],
     limitDeg: [-360, 360], maxVelocityDegPerS: 180, maxEffortNm: 28,
     massKg: 0.365, source: 'S4',

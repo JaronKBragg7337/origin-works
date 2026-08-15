@@ -14,31 +14,48 @@ finished crate and asking **"where did this come from?"** returns a real answer.
 
 ## Status
 
-**Specification layer written and verified. No geometry yet — that is the next
-gate, deliberately.**
+**The world runs.** One map, a road, three factories, and a cycle that cuts
+real lumber, builds real panels and assembles a crate — with the assembly graph
+able to prove it.
 
-Live spec review: **https://jaronkbragg7337.github.io/origin-works/spec/**
-
-`/knowledge` holds the measurements the geometry will be generated from, in
-millimetres, through one central conversion in
-[`knowledge/units.js`](knowledge/units.js). Every source and its licence is in
-[`SOURCES.md`](SOURCES.md).
+- **Live:** https://jaronkbragg7337.github.io/origin-works/
+- **Measurements:** https://jaronkbragg7337.github.io/origin-works/spec/
 
 ```bash
-node tools/validate-knowledge.mjs
+node tools/validate-knowledge.mjs   # 109 checks on the specification
+node tools/run-cycle.mjs            # runs a full cycle headless, checks the graph
 ```
 
-107 checks pass. It recomputes every derived dimension, re-derives every
-fastener from the nailing rules in the USDA crate manual, balances the material
-against the kerf, and checks the fits the completion test asks about. It found
-two real problems and both were fixed in the spec rather than in the test.
+`/knowledge` holds the measurements the geometry is generated from, in
+millimetres, through one central conversion in
+[`knowledge/units.js`](knowledge/units.js). Every source and its licence is in
+[`SOURCES.md`](SOURCES.md). `/src` generates every object from those numbers —
+there is no modelled geometry anywhere in the repository.
 
-Crate OW-C1: 838.2 × 800.0 × 577.8 mm, 48 wooden parts, 252 nails, 50.3 kg,
-86.48 % material yield from 15 sticks of stock.
+### What one cycle produces, measured
 
-The first milestone is one map, three factories, and a complete production cycle
-that runs start to finish and repeats — verified against the assembly graph
-rather than by watching it look right.
+| | |
+|---|---|
+| Stock in | 15 sticks, 39 014.4 mm |
+| Cuts | 48, each a scoped operation with the blade proven across the stock |
+| Pieces / kerf / offcut | 48 / 48 / 15 objects, all with permanent ids |
+| Material balance | **0.000 mm error** |
+| Nails driven | 112, penetration 44.50 mm, axis error 0.000° |
+| Crate | 148 addressable leaf parts under one id |
+| Graph nodes | 278, ids never reused |
+| Determinism | identical step count and id distribution across runs |
+
+### Known defects
+
+Reported rather than hidden, because a validation report that reads clean by
+omission is worse than one that fails.
+
+- 66 interpenetrations and 2 floating objects remain at the end of a cycle. The
+  panel internal layout is approximate, so once panels are stood up as walls
+  some boards overlap by one board thickness (19 mm).
+- The truck and forklift are built and drivable but the cycle does not yet use
+  them; stages hand off by manifest without the road journey between them.
+- Ten consecutive cycles (V1-TEST J72) have not been run.
 
 ## Reading order
 

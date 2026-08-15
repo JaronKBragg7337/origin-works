@@ -44,12 +44,18 @@ export const ROAD = Object.freeze({
 export const ROUTE = Object.freeze({
   id: 'ROUTE_MAIN',
   closed: true,
-  /** Waypoints, [x, z] on the ground plane. */
+  /**
+   * Waypoints, [x, z] on the ground plane.
+   *
+   * The loop is sized so it clears every building apron. That is not a matter
+   * of taste: a road drawn through a factory wall is a geometry disagreement,
+   * and `siteClashes()` below fails on it.
+   */
   waypointsMm: Object.freeze([
-    [-60000, -40000], [ 0, -40000], [ 60000, -40000],
-    [ 60000,  0], [ 60000,  40000],
-    [ 0,  40000], [-60000,  40000],
-    [-60000,  0],
+    [-78000, -60000], [ 0, -60000], [ 78000, -60000],
+    [ 78000,  0], [ 78000,  60000],
+    [ 0,  60000], [-78000,  60000],
+    [-78000,  0],
   ]),
   /** Tolerance for "on the road": half the road width less half the truck. */
   corridorHalfWidthMm: ROAD.widthMm / 2 - CHASSIS.overallWidthMm / 2,
@@ -90,19 +96,85 @@ function building(id, label, stage, centreMm, footprintMm, doorHeadingDeg) {
 }
 
 export const BUILDINGS = Object.freeze([
-  building('B1', 'Cut shop', 'CUT_SHOP', [-45000, -20000], [42000, 28000], 90),
-  building('B2', 'Panel shop', 'PANEL_SHOP', [10000, -20000], [46000, 30000], 90),
-  building('B3', 'Crate shop', 'CRATE_SHOP', [62000, 12000], [40000, 30000], 180),
+  building('B1', 'Cut shop', 'CUT_SHOP', [-45000, -25000], [42000, 28000], 90),
+  building('B2', 'Panel shop', 'PANEL_SHOP', [10000, -25000], [46000, 30000], 90),
+  building('B3', 'Crate shop', 'CRATE_SHOP', [48000, 20000], [40000, 30000], 180),
 ]);
 
 export const YARD = Object.freeze({
   id: 'YARD',
   label: 'Finished goods yard',
-  centreMm: [10000, 34000],
+  centreMm: [-20000, 30000],
   sizeMm: [40000, 16000],
   /** Where finished crates on pallets are set down and counted. */
   palletGridMm: Object.freeze({ pitchXMm: 1600, pitchZMm: 1400, columns: 8, rows: 4 }),
 });
+
+/** Margin the apron adds around a building shell, per side. */
+export const APRON_MARGIN_MM = 3000;
+
+/**
+ * A building's footprint in **world** axes, after its door heading is applied.
+ *
+ * This is the function that stops the layout being eyeballed. A heading of 90°
+ * swaps the footprint's axes, so a building declared 42 × 28 m occupies
+ * 28 × 42 m of the map — which is exactly how a road ended up drawn through
+ * three factory walls the first time this was laid out.
+ */
+export function buildingExtentMm(b, { includeApron = true } = {}) {
+  const [W, D] = b.footprintMm;
+  const m = includeApron ? APRON_MARGIN_MM * 2 : 0;
+  const swap = Math.abs(Math.round(b.doorHeadingDeg / 90) % 2) === 1;
+  const halfX = (swap ? D + m : W + m) / 2;
+  const halfZ = (swap ? W + m : D + m) / 2;
+  return {
+    minX: b.centreMm[0] - halfX, maxX: b.centreMm[0] + halfX,
+    minZ: b.centreMm[1] - halfZ, maxZ: b.centreMm[1] + halfZ,
+  };
+}
+
+function segmentBoxOverlap(a, b, halfWidthMm, box) {
+  // Axis-aligned road segments only, which is all this route uses.
+  const minX = Math.min(a[0], b[0]) - halfWidthMm, maxX = Math.max(a[0], b[0]) + halfWidthMm;
+  const minZ = Math.min(a[1], b[1]) - halfWidthMm, maxZ = Math.max(a[1], b[1]) + halfWidthMm;
+  const ox = Math.min(maxX, box.maxX) - Math.max(minX, box.minX);
+  const oz = Math.min(maxZ, box.maxZ) - Math.max(minZ, box.minZ);
+  return ox > 0 && oz > 0 ? { overlapXMm: +ox.toFixed(0), overlapZMm: +oz.toFixed(0) } : null;
+}
+
+/**
+ * Every place the site disagrees with itself: road through a building, or two
+ * buildings sharing ground. Returns an empty array when the map is coherent.
+ */
+export function siteClashes() {
+  const out = [];
+  const boxes = BUILDINGS.map((b) => ({ id: b.id, box: buildingExtentMm(b) }));
+  boxes.push({ id: 'YARD', box: {
+    minX: YARD.centreMm[0] - YARD.sizeMm[0] / 2, maxX: YARD.centreMm[0] + YARD.sizeMm[0] / 2,
+    minZ: YARD.centreMm[1] - YARD.sizeMm[1] / 2, maxZ: YARD.centreMm[1] + YARD.sizeMm[1] / 2,
+  } });
+
+  const w = ROAD.widthMm / 2;
+  for (const { id, box } of boxes) {
+    for (let i = 0; i < ROUTE.waypointsMm.length; i++) {
+      const a = ROUTE.waypointsMm[i];
+      const b2 = ROUTE.waypointsMm[(i + 1) % ROUTE.waypointsMm.length];
+      const hit = segmentBoxOverlap(a, b2, w, box);
+      if (hit) out.push({ kind: 'road-through-building', id, segment: i, ...hit });
+    }
+  }
+  for (let i = 0; i < boxes.length; i++) {
+    for (let j = i + 1; j < boxes.length; j++) {
+      const A = boxes[i].box, B = boxes[j].box;
+      const ox = Math.min(A.maxX, B.maxX) - Math.max(A.minX, B.minX);
+      const oz = Math.min(A.maxZ, B.maxZ) - Math.max(A.minZ, B.minZ);
+      if (ox > 0 && oz > 0) {
+        out.push({ kind: 'buildings-overlap', a: boxes[i].id, b: boxes[j].id, overlapXMm: +ox.toFixed(0), overlapZMm: +oz.toFixed(0) });
+      }
+    }
+  }
+  return out;
+}
 
 /**
  * Lighting and camera are not specification, but the phone budget is. These
