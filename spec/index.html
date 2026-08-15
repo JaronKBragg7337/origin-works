@@ -1,0 +1,187 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Origin Works specification layer — the measurements, before any geometry.">
+<title>Origin Works Spec Review</title>
+<style>
+  :root{
+    --bg:#f6f4f0; --panel:#fffdfa; --ink:#1b1815; --dim:#6b635a; --line:#ddd6cc;
+    --accent:#8a4b1f; --good:#2f6b3a; --code:#efe9e0;
+  }
+  :root:not([data-theme="light"]){ }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14120f; --panel:#1c1a16; --ink:#ece6dc; --dim:#a09587; --line:#332e27;
+      --accent:#d8925a; --good:#7cc08c; --code:#241f19;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14120f; --panel:#1c1a16; --ink:#ece6dc; --dim:#a09587; --line:#332e27;
+    --accent:#d8925a; --good:#7cc08c; --code:#241f19;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-text-size-adjust:100%;}
+  .wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+  header{border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:8px}
+  h1{font-size:1.5rem;margin:0 0 4px;letter-spacing:-0.01em}
+  h2{font-size:1.15rem;margin:36px 0 8px;color:var(--accent);letter-spacing:-0.01em}
+  h3{font-size:1rem;margin:22px 0 6px}
+  p,li{color:var(--ink)}
+  .sub{color:var(--dim);font-size:0.92rem;margin:0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0}
+  .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+  .kpi div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .kpi b{display:block;font-size:1.35rem;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+  .kpi span{color:var(--dim);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+  table{border-collapse:collapse;width:100%;font-size:0.85rem;min-width:520px}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{background:var(--code);font-weight:600;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--dim)}
+  td.n{font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:0.85em}
+  .ok{color:var(--good);font-weight:600}
+  .note{color:var(--dim);font-size:0.88rem}
+  ul{padding-left:20px}
+  footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);color:var(--dim);font-size:0.85rem}
+  a{color:var(--accent)}
+</style>
+<div class="wrap">
+<header>
+  <h1>Origin Works — specification layer</h1>
+  <p class="sub">Generated from <code>/knowledge</code> on 2026-08-15.
+  Nothing is built yet. This is the measurements, for review.</p>
+</header>
+
+<div class="card">
+  <p style="margin:0"><strong>Read this first.</strong> Geometry comes after the measurements exist.
+  Every number below is either taken from a source in <code>SOURCES.md</code> or marked
+  <code>original</code> in the spec file with the reason it has that value. The page is generated
+  from the spec files, so it cannot disagree with them.</p>
+</div>
+
+<h2>The crate — OW-C1</h2>
+<div class="kpi">
+  <div><span>Outside</span><b>838.2 × 800.0 × 577.8</b><span>mm</span></div>
+  <div><span>Internal</span><b>762.2 × 584.2 × 450.9</b><span>mm</span></div>
+  <div><span>Wooden parts</span><b>48</b><span>each with an id</span></div>
+  <div><span>Nails</span><b>252</b><span>real components</span></div>
+  <div><span>Mass</span><b>50.3 kg</b><span>49.2 wood + 1.11 steel</span></div>
+  <div><span>Species</span><b>510</b><span>kg/m³ Douglas-fir</span></div>
+</div>
+<p class="note">Lumber-sheathed cleated crate. Construction pattern from the USDA Wood Crate Design
+Manual (public domain); dimensions original. It is geometrically simple on purpose — the depth is
+in the manufacturing.</p>
+
+<h3>Why the frame is 1×4 on edge and the skids are 4×4</h3>
+<div class="card"><p style="margin:0">Rule 5 of the crate manual requires a 10d-or-smaller nail to
+penetrate <strong>2 to 2.5×</strong> the thickness of the piece holding its head. Sheathing is 19.0 mm,
+so every assembly nail needs <strong>38.0–47.5 mm</strong> of penetration and must not come out the far
+side. The only standard nail in that window is the <strong>8d common at 63.5 mm</strong>, giving 44.5 mm.
+That needs a member at least 44.5 mm deep to land in — so struts stand on edge (88.9 mm deep), and
+skids are square 4×4 because they are nailed into on two perpendicular axes and a 2×4 only offers
+88.9 mm on one of them. Nothing here was sized by eye.</p></div>
+
+<h3>Bill of materials</h3>
+<div class="scroll"><table><thead><tr><th>Part</th><th>Panel</th><th>Role</th><th>Stock</th><th>Section mm</th><th>Qty</th><th>Length mm</th><th>Total mm</th></tr></thead>
+<tbody><tr><td>BASE_SKID</td><td class="n">BASE</td><td class="n">skid</td><td class="n">4×4</td><td class="n">88.9 x 88.9</td><td class="n">2</td><td class="n">838.2</td><td class="n">1676.4</td></tr><tr><td>BASE_HEADER</td><td class="n">BASE</td><td class="n">header</td><td class="n">4×4</td><td class="n">88.9 x 88.9</td><td class="n">2</td><td class="n">622.2</td><td class="n">1244.4</td></tr><tr><td>BASE_FLOOR</td><td class="n">BASE</td><td class="n">floorboard</td><td class="n">1×6</td><td class="n">19.0 x 139.7</td><td class="n">6</td><td class="n">800.0</td><td class="n">4800.0</td></tr><tr><td>SIDE_SHEATH</td><td class="n">SIDE</td><td class="n">sheathing</td><td class="n">1×6</td><td class="n">19.0 x 139.7</td><td class="n">8</td><td class="n">838.2</td><td class="n">6705.6</td></tr><tr><td>SIDE_RAIL</td><td class="n">SIDE</td><td class="n">top rail</td><td class="n">1×4</td><td class="n">19.0 x 88.9</td><td class="n">2</td><td class="n">838.2</td><td class="n">1676.4</td></tr><tr><td>SIDE_STRUT</td><td class="n">SIDE</td><td class="n">intermediate strut</td><td class="n">1×4</td><td class="n">19.0 x 88.9</td><td class="n">4</td><td class="n">362.0</td><td class="n">1448.0</td></tr><tr><td>END_SHEATH</td><td class="n">END</td><td class="n">sheathing</td><td class="n">1×6</td><td class="n">19.0 x 139.7</td><td class="n">8</td><td class="n">762.0</td><td class="n">6096.0</td></tr><tr><td>END_RAIL</td><td class="n">END</td><td class="n">top rail</td><td class="n">1×4</td><td class="n">19.0 x 88.9</td><td class="n">2</td><td class="n">762.0</td><td class="n">1524.0</td></tr><tr><td>END_CORNER_STRUT</td><td class="n">END</td><td class="n">corner strut</td><td class="n">1×4</td><td class="n">19.0 x 88.9</td><td class="n">4</td><td class="n">362.0</td><td class="n">1448.0</td></tr><tr><td>END_CENTRE_STRUT</td><td class="n">END</td><td class="n">centre strut</td><td class="n">1×4</td><td class="n">19.0 x 88.9</td><td class="n">2</td><td class="n">362.0</td><td class="n">724.0</td></tr><tr><td>LID_SHEATH</td><td class="n">LID</td><td class="n">sheathing</td><td class="n">1×6</td><td class="n">19.0 x 139.7</td><td class="n">6</td><td class="n">800.0</td><td class="n">4800.0</td></tr><tr><td>LID_CLEAT</td><td class="n">LID</td><td class="n">locating cleat</td><td class="n">1×4</td><td class="n">19.0 x 88.9</td><td class="n">2</td><td class="n">714.0</td><td class="n">1428.0</td></tr></tbody></table></div>
+
+<h2>Fasteners — every one selected by a rule</h2>
+<div class="scroll"><table><thead><tr><th>Joint</th><th>Phase</th><th>Nail</th><th>Length</th><th>Ø</th><th>Through → into</th><th>Penetration</th><th>Far side</th><th>Count</th><th>Rule</th></tr></thead>
+<tbody><tr><td>SHEATH_TO_STRUT</td><td class="n">fabrication</td><td class="n">8d common</td><td class="n">63.5</td><td class="n">3.3</td><td class="n">19.0 -&gt; 88.9</td><td class="n">44.5</td><td class="n">none</td><td class="n">80</td><td class="n">S1 rule 5 (penetration)</td></tr><tr><td>SHEATH_TO_RAIL</td><td class="n">fabrication</td><td class="n">5d box</td><td class="n">44.5</td><td class="n">2.0</td><td class="n">19.0 -&gt; 19.0</td><td class="n">25.5</td><td class="n">6.5 clinch</td><td class="n">24</td><td class="n">S1 rule 4 (clinch, combined 38.0 mm &lt;= 76.2 mm)</td></tr><tr><td>BASE_FLOOR_TO_SKID</td><td class="n">fabrication</td><td class="n">8d common</td><td class="n">63.5</td><td class="n">3.3</td><td class="n">19.0 -&gt; 88.9</td><td class="n">44.5</td><td class="n">none</td><td class="n">44</td><td class="n">S1 rule 5</td></tr><tr><td>LID_SHEATH_TO_CLEAT</td><td class="n">fabrication</td><td class="n">8d common</td><td class="n">63.5</td><td class="n">3.3</td><td class="n">19.0 -&gt; 88.9</td><td class="n">44.5</td><td class="n">none</td><td class="n">24</td><td class="n">S1 rule 5</td></tr><tr><td>WALL_TO_BASE</td><td class="n">assembly</td><td class="n">8d common</td><td class="n">63.5</td><td class="n">3.3</td><td class="n">19.0 -&gt; 88.9</td><td class="n">44.5</td><td class="n">none</td><td class="n">44</td><td class="n">S1 rule 5</td></tr><tr><td>SIDE_TO_END_CORNER</td><td class="n">assembly</td><td class="n">8d common</td><td class="n">63.5</td><td class="n">3.3</td><td class="n">19.0 -&gt; 88.9</td><td class="n">44.5</td><td class="n">none</td><td class="n">12</td><td class="n">S1 p.44 corner detail</td></tr><tr><td>LID_TO_WALLS</td><td class="n">assembly</td><td class="n">8d common</td><td class="n">63.5</td><td class="n">3.3</td><td class="n">19.0 -&gt; 88.9</td><td class="n">44.5</td><td class="n">none</td><td class="n">24</td><td class="n">S1 rule 5</td></tr></tbody></table></div>
+<p class="note">Penetration and protrusion are recomputed by
+<code>tools/validate-knowledge.mjs</code> from the nailing rules, not typed in. The 5d box nail in the
+clinched joint protrudes <strong>6.50 mm</strong> against a required minimum of <strong>6.35 mm</strong> —
+that 0.15 mm is the entire margin, and it is why the nail is a 5d and not a 4d.</p>
+
+<h2>Material accounting — kerf is removed from the material</h2>
+<div class="scroll"><table><thead><tr><th>Stock</th><th>Pieces</th><th>Length</th><th>mm</th><th>Sticks</th><th>Input mm</th><th>Kerf mm</th><th>Offcut mm</th><th>Yield</th></tr></thead>
+<tbody><tr><td>4×4</td><td class="n">4</td><td class="n">L10FT</td><td class="n">3048.0</td><td class="n">1</td><td class="n">3048.0</td><td class="n">14.0</td><td class="n">113.2</td><td class="n">96.29 %</td></tr><tr><td>1×6</td><td class="n">28</td><td class="n">L8FT</td><td class="n">2438.4</td><td class="n">11</td><td class="n">26822.4</td><td class="n">98.0</td><td class="n">4322.8</td><td class="n">83.88 %</td></tr><tr><td>1×4</td><td class="n">16</td><td class="n">L10FT</td><td class="n">3048.0</td><td class="n">3</td><td class="n">9144.0</td><td class="n">56.0</td><td class="n">839.6</td><td class="n">90.82 %</td></tr></tbody></table></div>
+<div class="kpi">
+  <div><span>Stock in</span><b>39014.4</b><span>mm per crate</span></div>
+  <div><span>Kerf destroyed</span><b>168.0</b><span>mm, 3.5 mm × 48 cuts</span></div>
+  <div><span>Offcut</span><b>5275.6</b><span>mm, as real objects</span></div>
+  <div><span>Yield</span><b>86.48 %</b><span>15 sticks of stock</span></div>
+</div>
+<p class="note"><span class="ok">Balance closes exactly.</span>
+Input 39014.4 = outputs 33570.8 + kerf 168.0 + offcut 5275.6 mm,
+error 0.00 mm against a 0.5 mm tolerance. The offcut is not a
+deletion — it is 15 pieces of wood on the floor with ids.</p>
+
+<h2>Machines</h2>
+<h3>Crosscut saw OW-S1</h3>
+<div class="scroll"><table><thead><tr><th>Property</th><th>Value</th><th>Source</th></tr></thead>
+<tbody><tr><td>Blade diameter</td><td class="n">350 mm</td><td class="n">S6</td></tr><tr><td>Kerf</td><td class="n">3.5 mm</td><td class="n">S6</td></tr><tr><td>Plate</td><td class="n">2.5 mm + 2 × 0.5 mm tip</td><td class="n">S6</td></tr><tr><td>Spindle</td><td class="n">3000 rpm</td><td class="n">original</td></tr><tr><td>Rim speed</td><td class="n">55.0 m/s (carbide band is 50–80)</td><td class="n">derived</td></tr><tr><td>Feed</td><td class="n">120 mm/s</td><td class="n">original</td></tr><tr><td>Blade contact per cut</td><td class="n">1.16 s across a 139.7 mm board</td><td class="n">derived</td></tr><tr><td>Table height</td><td class="n">900 mm</td><td class="n">original</td></tr></tbody></table></div>
+
+<h3>Six-axis arm OW-A6</h3>
+<div class="scroll"><table><thead><tr><th>Joint</th><th>Axis</th><th>Limits °</th><th>Max °/s</th><th>Effort N·m</th><th>Link mass kg</th></tr></thead>
+<tbody><tr><td>shoulder_pan</td><td class="n">z</td><td class="n">-360 to 360</td><td class="n">180</td><td class="n">150</td><td class="n">3.761</td></tr><tr><td>shoulder_lift</td><td class="n">y</td><td class="n">-360 to 360</td><td class="n">180</td><td class="n">150</td><td class="n">8.058</td></tr><tr><td>elbow</td><td class="n">y</td><td class="n">-180 to 180</td><td class="n">180</td><td class="n">150</td><td class="n">2.846</td></tr><tr><td>wrist_1</td><td class="n">y</td><td class="n">-360 to 360</td><td class="n">180</td><td class="n">28</td><td class="n">1.37</td></tr><tr><td>wrist_2</td><td class="n">z</td><td class="n">-360 to 360</td><td class="n">180</td><td class="n">28</td><td class="n">1.3</td></tr><tr><td>wrist_3</td><td class="n">y</td><td class="n">-360 to 360</td><td class="n">180</td><td class="n">28</td><td class="n">0.365</td></tr></tbody></table></div>
+<p class="note">Kinematic parameters from a BSD-3-Clause robot description (S4) — numbers only, no
+meshes, no appearance. Reach 1149.8 mm, payload 5 kg,
+arm mass 21.7 kg. The elbow is limited to
+±180° because the shoulder physically obstructs it — that is a real constraint, kept.</p>
+
+<h3>End effectors</h3>
+<div class="scroll"><table><thead><tr><th>Tool</th><th>Stroke mm</th><th>Payload kg</th><th>Grip N</th><th>Handles</th></tr></thead>
+<tbody><tr><td>OW-G2 gripper</td><td class="n">85</td><td class="n">5</td><td class="n">20–235</td><td class="n">1×4 and 1×6 boards</td></tr><tr><td>OW-G3 heavy gripper</td><td class="n">160</td><td class="n">12</td><td class="n">60–600</td><td class="n">4×4 skids and headers</td></tr><tr><td>OW-N1 nailer</td><td class="n">—</td><td class="n">—</td><td class="n">1400 N drive</td><td class="n">60-nail magazine</td></tr></tbody></table></div>
+<div class="card"><p style="margin:0"><strong>The second gripper exists because the validator said so.</strong>
+OW-G2 has an 85.0 mm stroke and the 4×4 skid is 88.9 mm across. The check failed, so the requirement
+was computed from the bill of materials — needs ≥142.2 mm stroke
+and ≥8.45 kg — and a tool was specified to meet it. OW-G2 now
+<em>refuses</em> an 88.9 mm part rather than stretching its pose to reach it.</p></div>
+
+<h2>Fits that have to agree</h2>
+<div class="scroll"><table><thead><tr><th>Fit</th><th>Clearance</th><th>Verdict</th></tr></thead>
+<tbody><tr><td>Fork tine through pallet end opening</td><td class="n">58.9 mm high, 350.9 mm wide</td><td class="n">fits</td></tr><tr><td>Fork tine through pallet side notch</td><td class="n">8.1 mm high, 128.6 mm wide</td><td class="n">fits</td></tr><tr><td>Crate on pallet deck</td><td class="n">381.0 mm and 216.0 mm of margin</td><td class="n">fits</td></tr><tr><td>Loaded pallet in truck bed</td><td class="n">3381 mm and 1324 mm of margin</td><td class="n">fits</td></tr><tr><td>Truck through factory door</td><td class="n">2560 mm wide, 2350 mm high</td><td class="n">clears</td></tr><tr><td>Lid cleat into crate opening</td><td class="n">5.0 mm per side</td><td class="n">fits</td></tr></tbody></table></div>
+<p class="note">The side-notch clearance of 8.1 mm is the tightest fit in the
+whole specification. The fork tine is 30 mm thick because the pallet notch is 38.1 mm deep — the tine
+was sized by the pallet, not the other way round.</p>
+
+<h2>Process</h2>
+<div class="scroll"><table><thead><tr><th>Stage</th><th>Consumes</th><th>Produces</th><th>Machines</th></tr></thead>
+<tbody><tr><td>Cut shop</td><td class="n">stock lumber</td><td class="n">cut pieces, offcuts, kerf waste</td><td class="n">OW-S1, OW-A6, OW-C</td></tr><tr><td>Panel shop</td><td class="n">cut pieces</td><td class="n">base, two sides, two ends, lid</td><td class="n">OW-A6, OW-N1, OW-C</td></tr><tr><td>Crate shop</td><td class="n">panels</td><td class="n">closed crate on a pallet</td><td class="n">OW-A6, OW-N1, OW-F15</td></tr></tbody></table></div>
+<p class="note">Stages hand off by manifest, not by timer — the same mechanism a later stage of the
+project will use to move an object between separate worlds. Determinism: fixed
+16.6667 ms process timestep, seed
+20260815, no <code>Math.random</code>, no model at runtime.</p>
+
+<h2>Collision is process-aware</h2>
+<div class="scroll"><table><thead><tr><th>Operation</th><th>Tool</th><th>Region</th><th>Penetration</th><th>Validated on close</th></tr></thead>
+<tbody><tr><td>CUT</td><td class="n">TOOL</td><td class="n">kerf-slab</td><td class="n">scoped</td><td class="n">4 checks</td></tr><tr><td>DRIVE_FASTENER</td><td class="n">TOOL</td><td class="n">fastener-cylinder</td><td class="n">scoped</td><td class="n">5 checks</td></tr><tr><td>GRASP</td><td class="n">TOOL</td><td class="n">jaw-pads</td><td class="n">contact only</td><td class="n">3 checks</td></tr><tr><td>SEAT</td><td class="n">—</td><td class="n">declared-fit</td><td class="n">contact only</td><td class="n">2 checks</td></tr></tbody></table></div>
+<p class="note">An operation cannot be opened without a type, a tool, an explicit participant list, a
+bounded region and a stage. Penetration is refused for any object not named in it. There is no global
+collision switch, and the one disabled group pair (nail-to-nail) carries a written reason.</p>
+
+<h2>Phone budget, stated as numbers</h2>
+<div class="scroll"><table><thead><tr><th>Target</th><th>Viewport</th><th>FPS</th><th>Draw calls</th><th>Triangles</th><th>Shadow map</th></tr></thead>
+<tbody><tr><td>Phone</td><td class="n">390 × 844 css px</td><td class="n">30</td><td class="n">≤ 150</td><td class="n">≤ 350,000</td><td class="n">1024</td></tr><tr><td>Desktop</td><td class="n">1920 × 1080 css px</td><td class="n">60</td><td class="n">≤ 400</td><td class="n">≤ 1,500,000</td><td class="n">2048</td></tr></tbody></table></div>
+<p class="note">One crate is 48 parts + 252 nails = 300 objects.
+Two crates in flight plus a pallet is 615 objects.
+Only two distinct nail types, so all 252 nails are two instanced draws. Any fidelity
+reduction for mobile must arrive with the number that justified it.</p>
+
+<h2>Sources</h2>
+<ul>
+<li><strong>S1</strong> USDA Agriculture Handbook 252, <em>Wood Crate Design Manual</em> — public domain. Nailing rules, crate construction pattern.</li>
+<li><strong>S2</strong> USDA FPL-GTR-190 ch. 8, <em>Fastenings</em> — public domain. Nail dimension tables, lead holes, clinching.</li>
+<li><strong>S3</strong> PS 20 American Softwood Lumber Standard (NIST) — public domain. Dressed lumber sizes.</li>
+<li><strong>S4</strong> Universal Robots ROS 2 description — BSD-3-Clause. Kinematic parameters only; no meshes.</li>
+<li><strong>S5</strong> USDA Forest Service pallet research — public distribution. Stringer pallet geometry.</li>
+<li><strong>S6</strong> Industrial saw blade catalogue data — dimensions are facts. Blade and kerf.</li>
+<li><strong>S7</strong> Conveyor roller planning data — figures are facts. Roller pitch, speed.</li>
+<li><strong>S8</strong> Two-finger gripper published specification — figures are facts. Stroke, force, payload.</li>
+</ul>
+<p class="note">Paid standards (ISO 6780, ISO 2328, ASTM F1667, ASTM D6039/D6251) were deliberately
+not consulted; where a number was needed from that territory it is marked <code>original</code> and
+sized against something measurable. Full detail, including what was deliberately not used and why,
+is in <code>SOURCES.md</code>.</p>
+
+<footer>
+Origin Works · specification layer 1.0.0-knowledge ·
+48 parts, 252 fasteners, 0 geometry ·
+verified by <code>node tools/validate-knowledge.mjs</code>
+</footer>
+</div>
+</body></html>

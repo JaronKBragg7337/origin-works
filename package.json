@@ -1,0 +1,10 @@
+{
+  "name": "origin-works",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node tools/validate-knowledge.mjs",
+    "spec": "node tools/gen-spec-page.mjs"
+  }
+}

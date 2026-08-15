@@ -14,7 +14,27 @@ finished crate and asking **"where did this come from?"** returns a real answer.
 
 ## Status
 
-Setting up. Nothing built yet.
+**Specification layer written and verified. No geometry yet — that is the next
+gate, deliberately.**
+
+Live spec review: **https://jaronkbragg7337.github.io/origin-works/spec/**
+
+`/knowledge` holds the measurements the geometry will be generated from, in
+millimetres, through one central conversion in
+[`knowledge/units.js`](knowledge/units.js). Every source and its licence is in
+[`SOURCES.md`](SOURCES.md).
+
+```bash
+node tools/validate-knowledge.mjs
+```
+
+107 checks pass. It recomputes every derived dimension, re-derives every
+fastener from the nailing rules in the USDA crate manual, balances the material
+against the kerf, and checks the fits the completion test asks about. It found
+two real problems and both were fixed in the spec rather than in the test.
+
+Crate OW-C1: 838.2 × 800.0 × 577.8 mm, 48 wooden parts, 252 nails, 50.3 kg,
+86.48 % material yield from 15 sticks of stock.
 
 The first milestone is one map, three factories, and a complete production cycle
 that runs start to finish and repeats — verified against the assembly graph
