@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+.vite/
+*.log
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+
+# Agent worktrees are separate git repos and must not be committed.
+.claude/worktrees/
